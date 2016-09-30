@@ -38,6 +38,8 @@ func (c *Client) StopForKey(key int) {
 
 func (client *Client) Read() {
 	var message Message
+	fmt.Println("Listening for data from client on new socket:", client.socket.RemoteAddr())
+
 	for {
 		if err := client.socket.ReadJSON(&message); err != nil {
 			fmt.Println("Err reading JSON:", message)
@@ -54,12 +56,14 @@ func (client *Client) Read() {
 
 func (client *Client) Write() {
 	for msg := range client.send {
-		fmt.Println("Read message from send channel:", msg)
+		fmt.Println("Read message from send channel for client to consume:", msg)
 
-		if err := client.socket.WriteJSON(msg); err != nil {
+		err := client.socket.WriteJSON(msg)
+		if err != nil {
 			fmt.Println("Err writing JSON:", msg)
 			break
 		}
+		fmt.Println("Putting message on socket")
 	}
 	client.socket.Close()
 }
