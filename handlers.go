@@ -81,7 +81,19 @@ func channelUnsubscribeMessages(client *Client, data interface{}) {
 }
 
 func channelAddMessage(client *Client, data interface{}) {
+	var clientData ChannelAddMsg
 
+	if err := mapstructure.Decode(data, &clientData); err != nil {
+		client.send <- Message{"error", err.Error()}
+		return
+	}
+
+	if err := r.Table("messages").Insert(clientData).Exec(client.dbSession); err != nil {
+		client.send <- Message{"error", err.Error()}
+		return
+	}
+
+	client.send <- Message{"Got message from client-side", clientData}
 }
 
 func vaporAddMessages(client *Client, data interface{}) {
@@ -90,6 +102,7 @@ func vaporAddMessages(client *Client, data interface{}) {
 	limit, err := strconv.Atoi(clientData["count"])
 	if err != nil {
 		client.send <- Message{"error", err.Error()}
+		return
 	}
 	client.send <- Message{"Hydrating some messages for you every second ...", ""}
 
@@ -107,7 +120,7 @@ func vaporAddMessages(client *Client, data interface{}) {
 			sources := []string{"Backoffice", "Pocket"}
 			msg["source"] = sources[math.Intn(1)]
 
-			times := []string{"9/31/2016 22:15:44 UTC", "9/31/2016 09:29:44 UTC", "9/30/2016 18:0:44 UTC", "9/29/2016 10:13:64 UTC"}
+			times := []string{"9/28/2016 22:15:44 UTC", "9/27/2016 09:29:44 UTC", "9/30/2016 18:0:44 UTC", "9/29/2016 10:13:64 UTC"}
 			msg["time"] = times[math.Intn(3)]
 
 			types := []string{"EventTypeA", "EventTypeB"}
