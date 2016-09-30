@@ -32,6 +32,7 @@ func main() {
 	router.Handle("channel subscribe messages", channelSubscribeMessages)
 	router.Handle("channel unsubscribe messages", channelUnsubscribeMessages)
 	router.Handle("channel add message", channelAddMessage)
+	router.Handle("vapor add messages", vaporAddMessages)
 
 	http.Handle("/", router)
 	http.ListenAndServe(":4000", nil)
