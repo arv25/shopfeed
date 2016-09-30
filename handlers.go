@@ -6,33 +6,39 @@ import (
 )
 
 const (
-	ChannelStop = iota
-	UserStop
-	MessageStop
+	ChannelMessageStop = iota
 )
 
-func addChannel(client *Client, data interface{}) {
-	var channel Channel
+func channelList(client *Client, data interface{}) {
+	cursor, err := r.Table("channel").
+		Changes(r.ChangesOpts{IncludeInitial: true}).
+		Run(client.dbSession)
+	if err != nil {
+		client.send <- Message{"error", err.Error()}
+	}
 
-	err := mapstructure.Decode(data, &channel)
+	go func() {
+		var change r.ChangeResponse
+		for cursor.Next(&change) {
+			client.send <- Message{"channel", change.NewValue}
+		}
+	}()
+}
+
+func channelSubscribeMessages(client *Client, data interface{}) {
+	stop := client.NewStopChannel(ChannelMessageStop)
+	result := make(chan r.ChangeResponse)
+
+	var clientData ChannelSubMsgs
+	err := mapstructure.Decode(data, &clientData)
 	if err != nil {
 		client.send <- Message{"error", err.Error()}
 		return
 	}
 
-	go func() {
-		err := r.Table("channel").Insert(channel).Exec(client.dbSession)
-		if err != nil {
-			client.send <- Message{"error", err.Error()}
-		}
-	}()
-}
-
-func subscribeChannel(client *Client, data interface{}) {
-	stop := client.NewStopChannel(ChannelStop)
-	result := make(chan r.ChangeResponse)
-
-	cursor, err := r.Table("channel").
+	cursor, err := r.Table("message").
+		GetAll(clientData.ChannelId).
+		OptArgs(r.GetAllOpts{Index: "channelId"}).
 		Changes(r.ChangesOpts{IncludeInitial: true}).
 		Run(client.dbSession)
 	if err != nil {
@@ -61,6 +67,10 @@ func subscribeChannel(client *Client, data interface{}) {
 	}()
 }
 
-func unsubscribeChannel(client *Client, data interface{}) {
-	client.StopForKey(ChannelStop)
+func channelUnsubscribeMessages(client *Client, data interface{}) {
+	client.StopForKey(ChannelMessageStop)
+}
+
+func channelAddMessage(client *Client, data interface{}) {
+
 }

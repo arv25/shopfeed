@@ -6,14 +6,15 @@ import (
 	"net/http"
 )
 
-type Channel struct {
-	Id   string `json:"id" gorethink:"id,omitempty"`
-	Name string `json:"name" gorethink:"name"`
+type ChannelSubMsgs struct {
+	StoreId   string `json:"storeId" gorethink:"store_id,omitempty"`
+	ChannelId string `json:"channelId" gorethink:"channel_id,omitempty"`
 }
 
-type User struct {
-	Id   string `gorethink:"id,omitempty"`
-	Name string `gorethink:"name"`
+type ChannelAddMsg struct {
+	StoreId   string `json:"storeId" gorethink:"store_id,omitempty"`
+	ChannelId string `json:"channelId" gorethink:"channel_id,omitempty"`
+	Message   string `json:"message" gorethink:"message,omitempty"`
 }
 
 func main() {
@@ -27,9 +28,10 @@ func main() {
 
 	router := NewRouter(dbSession)
 
-	router.Handle("channel add", addChannel)
-	router.Handle("channel subscribe", subscribeChannel)
-	router.Handle("channel unsubscribe", unsubscribeChannel)
+	router.Handle("channel list", channelList)
+	router.Handle("channel subscribe messages", channelSubscribeMessages)
+	router.Handle("channel unsubscribe messages", channelUnsubscribeMessages)
+	router.Handle("channel add message", channelAddMessage)
 
 	http.Handle("/", router)
 	http.ListenAndServe(":4000", nil)
