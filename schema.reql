@@ -1,0 +1,8 @@
+## Schema
+
+r.dbCreate('shopfeed_dev');
+r.db('shopfeed_dev').tableCreate('channels');
+r.db('shopfeed_dev').tableCreate('messages');
+r.db('shopfeed_dev').table('messages').indexCreate('storeId');
+r.db('shopfeed_dev').table('messages').indexCreate('channelId');
+r.db('shopfeed_dev').table('messages').indexCreate('StoreChannel', [r.row("storeId"), r.row("channelId")]);

@@ -1,0 +1,22 @@
+## Seed
+
+r.db('shopfeed_dev').table('channels').insert({name:"All Notifications"});
+r.db('shopfeed_dev').table('channels').insert({name:"Shifts"});
+r.db('shopfeed_dev').table('channels').insert({name:"Sales Goals"});
+r.db('shopfeed_dev').table('channels').insert({name:"Cash Drawer Activity"});
+r.db('shopfeed_dev').table('channels').insert({name:"Kitchen Orders"});
+r.db('shopfeed_dev').table('channels').insert({name:"Open Tables"});
+r.db('shopfeed_dev').table('channels').insert({name:"Social Integration"});
+r.db('shopfeed_dev').table('channels').insert({name:"Delivery Orders"});
+r.db('shopfeed_dev').table('channels').insert({name:"Inventory Alerts"});
+r.db('shopfeed_dev').table('channels').insert({name:"Team"});
+r.db('shopfeed_dev').table('channels').insert({name:"SK Broadcast"});
+
+r.db('shopfeed_dev').table('messages').insert({storeId: "ABC1234", channelId: "a301004a-824f-48e4-b5fe-e2c15aa2f085", source: "Backoffice", time: "9/30/2016 12:30:44 UTC", type: "Shift Opened", userName: "Hankster", message: ""});
+r.db('shopfeed_dev').table('messages').insert({storeId: "ABC1234", channelId: "a301004a-824f-48e4-b5fe-e2c15aa2f085", source: "Backoffice", time: "9/30/2016 12:35:44 UTC", type: "Shift Closed", userName: "LisaLisa", message: ""});
+r.db('shopfeed_dev').table('messages').insert({storeId: "ABC1234", channelId: "a301004a-824f-48e4-b5fe-e2c15aa2f085", source: "Backoffice", time: "9/29/2016 12:21:13 UTC", type: "Shift Opened", userName: "Gabe", message: ""});
+r.db('shopfeed_dev').table('messages').insert({storeId: "ABC1234", channelId: "a301004a-824f-48e4-b5fe-e2c15aa2f085", source: "Backoffice", time: "9/29/2016 12:29:14 UTC", type: "Shift Closed", userName: "Bubba", message: ""});
+r.db('shopfeed_dev').table('messages').insert({storeId: "DEF4567", channelId: "a301004a-824f-48e4-b5fe-e2c15aa2f085", source: "Backoffice", time: "9/30/2016 11:37:44 UTC", type: "Shift Opened", userName: "Donny", message: ""});
+r.db('shopfeed_dev').table('messages').insert({storeId: "DEF4567", channelId: "a301004a-824f-48e4-b5fe-e2c15aa2f085", source: "Backoffice", time: "9/30/2016 11:45:44 UTC", type: "Shift Closed", userName: "Low", message: ""});
+r.db('shopfeed_dev').table('messages').insert({storeId: "DEF4567", channelId: "a301004a-824f-48e4-b5fe-e2c15aa2f085", source: "Backoffice", time: "9/30/2016 11:22:44 UTC", type: "Shift Opened", userName: "Mikey", message: ""});
+r.db('shopfeed_dev').table('messages').insert({storeId: "DEF4567", channelId: "a301004a-824f-48e4-b5fe-e2c15aa2f085", source: "Backoffice", time: "9/30/2016 11:28:44 UTC", type: "Shift Closed", userName: "Raf", message: ""});
