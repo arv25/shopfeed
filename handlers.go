@@ -10,7 +10,7 @@ const (
 )
 
 func channelList(client *Client, data interface{}) {
-	cursor, err := r.Table("channel").
+	cursor, err := r.Table("channels").
 		Changes(r.ChangesOpts{IncludeInitial: true}).
 		Run(client.dbSession)
 	if err != nil {
@@ -22,6 +22,7 @@ func channelList(client *Client, data interface{}) {
 		for cursor.Next(&change) {
 			client.send <- Message{"channel", change.NewValue}
 		}
+		cursor.Close()
 	}()
 }
 
@@ -36,9 +37,13 @@ func channelSubscribeMessages(client *Client, data interface{}) {
 		return
 	}
 
-	cursor, err := r.Table("message").
-		GetAll(clientData.ChannelId).
-		OptArgs(r.GetAllOpts{Index: "channelId"}).
+	var compoundIndexQueryVals [2]string
+	compoundIndexQueryVals[0] = clientData.StoreId
+	compoundIndexQueryVals[1] = clientData.ChannelId
+
+	cursor, err := r.Table("messages").
+		GetAll(compoundIndexQueryVals).
+		OptArgs(r.GetAllOpts{Index: "StoreChannel"}).
 		Changes(r.ChangesOpts{IncludeInitial: true}).
 		Run(client.dbSession)
 	if err != nil {
@@ -60,7 +65,7 @@ func channelSubscribeMessages(client *Client, data interface{}) {
 				return
 			case change := <-result:
 				if change.NewValue != nil && change.OldValue == nil {
-					client.send <- Message{"channel add", change.NewValue}
+					client.send <- Message{"channel message", change.NewValue}
 				}
 			}
 		}

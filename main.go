@@ -19,8 +19,8 @@ type ChannelAddMsg struct {
 
 func main() {
 	dbSession, err := r.Connect(r.ConnectOpts{
-		Address:  "localhost:28015",
-		Database: "rtsupport",
+		Address:  "ec2-54-196-42-226.compute-1.amazonaws.com",
+		Database: "shopfeed_dev",
 	})
 	if err != nil {
 		log.Panic(err.Error())
