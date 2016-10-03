@@ -120,7 +120,7 @@ func vaporAddMessages(client *Client, data interface{}) {
 			sources := []string{"Backoffice", "Pocket"}
 			msg["source"] = sources[math.Intn(1)]
 
-			times := []string{"9/28/2016 22:15:44 UTC", "9/27/2016 09:29:44 UTC", "9/30/2016 18:0:44 UTC", "9/29/2016 10:13:64 UTC"}
+			times := []string{"9/28/2016 22:15:44 UTC", "9/27/2016 09:29:44 UTC", "9/30/2016 18:30:44 UTC", "9/29/2016 10:13:64 UTC"}
 			msg["time"] = times[math.Intn(3)]
 
 			types := []string{"EventTypeA", "EventTypeB"}
