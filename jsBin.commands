@@ -1,6 +1,6 @@
 // let ws = new WebSocket('ws://localhost:4000');
 // let ws = new WebSocket('ws://shopfeed-dev.us-east-1.elasticbeanstalk.com');
-let ws = new WebSocket('ws://shopfeed2-dev.us-east-1.elasticbeanstalk.com');
+let ws = new WebSocket('ws://shopfeed-dev2.us-east-1.elasticbeanstalk.com');
 
 let chanlist = {
   name: "channel list",
@@ -13,15 +13,15 @@ let chansubmsgs = {
   name: "channel subscribe messages",
   data: {
     storeId: "ABC1234",
-    channelId: "a301004a-824f-48e4-b5fe-e2c15aa2f085"
+    channelId: "635c59e0-4645-4391-9bbc-691046768c79"
   }
 };
 
 let useraddmsg = {
   name: "channel add message",
   data: {
-    storeId: "test",
-    channelId: "a301004a-824f-48e4-b5fe-e2c15aa2f085",
+    storeId: "ABC1234",
+    channelId: "635c59e0-4645-4391-9bbc-691046768c79",
     source: "Pocket",
     time: "9/30/2016 12:30:44 UTC",
     type: "Team Message",
@@ -38,10 +38,10 @@ let vapor = {
 };
 
 
-let msg = chanlist;
-//let msg = chansubmsgs;
-//let msg = vapor;
-//let msg = useraddmsg
+// let msg = chanlist;
+let msg = chansubmsgs;
+// let msg = vapor;
+// let msg = useraddmsg
 
 ws.onopen = () => {
   console.log("sent");
