@@ -31,7 +31,7 @@ func channelList(client *Client, data interface{}) {
 }
 
 func channelSubscribeMessages(client *Client, data interface{}) {
-	stop := client.NewStopChannel(ChannelMessageStop)
+	// stop := client.NewStopChannel(ChannelMessageStop)
 	result := make(chan r.ChangeResponse)
 
 	var clientData ChannelSubMsgs
@@ -64,9 +64,10 @@ func channelSubscribeMessages(client *Client, data interface{}) {
 	go func() {
 		for {
 			select {
-			case <-stop:
-				cursor.Close()
-				return
+			// case <-stop:
+			// 	fmt.Println("Closing DB cursor.")
+			// 	cursor.Close()
+			// 	return
 			case change := <-result:
 				if change.NewValue != nil && change.OldValue == nil {
 					client.send <- Message{"channel message", change.NewValue}
