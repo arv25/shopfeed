@@ -31,7 +31,6 @@ func channelList(client *Client, data interface{}) {
 }
 
 func channelSubscribeMessages(client *Client, data interface{}) {
-	// stop := client.NewStopChannel(ChannelMessageStop)
 	result := make(chan r.ChangeResponse)
 
 	var clientData ChannelSubMsgs
@@ -41,10 +40,14 @@ func channelSubscribeMessages(client *Client, data interface{}) {
 		return
 	}
 
+	// create a new stop channel for this feed
+	stop := client.NewStopChannel(clientData.StoreId, clientData.ChannelId)
+
 	var compoundIndexQueryVals [2]string
 	compoundIndexQueryVals[0] = clientData.StoreId
 	compoundIndexQueryVals[1] = clientData.ChannelId
 
+	fmt.Println("Cursor opening for channel:", clientData.ChannelId)
 	cursor, err := r.Table("messages").
 		GetAll(compoundIndexQueryVals).
 		OptArgs(r.GetAllOpts{Index: "StoreChannel"}).
@@ -64,10 +67,10 @@ func channelSubscribeMessages(client *Client, data interface{}) {
 	go func() {
 		for {
 			select {
-			// case <-stop:
-			// 	fmt.Println("Closing DB cursor.")
-			// 	cursor.Close()
-			// 	return
+			case <-stop:
+				fmt.Println("Closing DB cursor for channel:", clientData.ChannelId)
+				cursor.Close()
+				return
 			case change := <-result:
 				if change.NewValue != nil && change.OldValue == nil {
 					client.send <- Message{"channel message", change.NewValue}
@@ -78,7 +81,15 @@ func channelSubscribeMessages(client *Client, data interface{}) {
 }
 
 func channelUnsubscribeMessages(client *Client, data interface{}) {
-	client.StopForKey(ChannelMessageStop)
+	var clientData ChannelSubMsgs
+	err := mapstructure.Decode(data, &clientData)
+	if err != nil {
+		client.send <- Message{"error", err.Error()}
+		return
+	}
+
+	// Pass the store_id and channel_id to determine which key in the map of stop channels.
+	client.StopForKey(clientData.StoreId, clientData.ChannelId)
 }
 
 func channelAddMessage(client *Client, data interface{}) {

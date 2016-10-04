@@ -18,22 +18,32 @@ type Client struct {
 	socket       *websocket.Conn
 	findHandler  FindHandler
 	dbSession    *r.Session
-	stopChannels map[int]chan bool
+	stopChannels map[string]chan bool
 }
 
-func (c *Client) NewStopChannel(stopkey int) chan bool {
-	c.StopForKey(stopkey)
+func (c *Client) NewStopChannel(storeId string, channelId string) chan bool {
+	stopkey := storeId + "::" + channelId
 
+	// first try to unsub from the channel incase it's already been subscribed to
+	c.StopForKey(storeId, channelId)
+
+	// add to stopChannels map
 	stop := make(chan bool)
 	c.stopChannels[stopkey] = stop
+	fmt.Println("Adding stopkey to map: ", stopkey)
 	return stop
 }
 
-func (c *Client) StopForKey(key int) {
-	if ch, found := c.stopChannels[key]; found {
-		ch <- true
+func (c *Client) StopForKey(storeId string, channelId string) {
+	stopkey := storeId + "::" + channelId
+
+	if channel, found := c.stopChannels[stopkey]; found {
+		fmt.Println("stopping for key: ", stopkey)
+		channel <- true
 	}
-	delete(c.stopChannels, key)
+
+	fmt.Println("Deleting stopkey from map: ", stopkey)
+	delete(c.stopChannels, stopkey)
 }
 
 func (client *Client) Read() {
@@ -81,6 +91,6 @@ func NewClient(socket *websocket.Conn, findHandler FindHandler, dbSession *r.Ses
 		socket:       socket,
 		findHandler:  findHandler,
 		dbSession:    dbSession,
-		stopChannels: make(map[int]chan bool),
+		stopChannels: make(map[string]chan bool),
 	}
 }
