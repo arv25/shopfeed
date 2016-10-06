@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	r "github.com/dancannon/gorethink"
 	"log"
 	"net/http"
@@ -39,5 +40,7 @@ func main() {
 	router.Handle("vapor add messages", vaporAddMessages)
 
 	http.Handle("/", router)
+
+	fmt.Println("Running FeedServer ...")
 	http.ListenAndServe(":4000", nil)
 }
