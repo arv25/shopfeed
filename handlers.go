@@ -6,6 +6,21 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
+type ChannelSubMsgs struct {
+	StoreId   string `json:"storeId" gorethink:"storeId,omitempty"`
+	ChannelId string `json:"channelId" gorethink:"channelId,omitempty"`
+}
+
+type ChannelAddMsg struct {
+	StoreId   string `json:"storeId" gorethink:"storeId,omitempty"`
+	ChannelId string `json:"channelId" gorethink:"channelId,omitempty"`
+	Source    string `json:"source" gorethink:"source,omitempty"`
+	Time      string `json:"time" gorethink:"time,omitempty"`
+	Type      string `json:"type" gorethink:"type,omitempty"`
+	UserName  string `json:"userName" gorethink:"userName,omitempty"`
+	Message   string `json:"message" gorethink:"message,omitempty"`
+}
+
 func channelList(client *Client, data interface{}) {
 	cursor, err := r.Table("channels").
 		Changes(r.ChangesOpts{IncludeInitial: true}).
@@ -44,7 +59,7 @@ func channelSubscribeMessages(client *Client, data interface{}) {
 	cursor, err := r.Table("messages").
 		GetAll(compoundIndexQueryVals).
 		OptArgs(r.GetAllOpts{Index: "StoreChannel"}).
-		Changes(r.ChangesOpts{IncludeInitial: true}).
+		Changes(r.ChangesOpts{IncludeInitial: false}).
 		Run(client.dbSession)
 	if err != nil {
 		client.send <- Message{"error", err.Error()}
