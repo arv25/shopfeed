@@ -79,7 +79,8 @@ func (client *Client) Write() {
 }
 
 func (c *Client) Close() {
-	for _, ch := range c.stopChannels {
+	for key, ch := range c.stopChannels {
+		fmt.Println("Closing routine for: ", key)
 		ch <- true
 	}
 	close(c.send)
